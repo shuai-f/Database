@@ -1,1 +1,1 @@
-﻿# Database数据库系统设计
+﻿﻿# Database数据库系统设计- 数据库 MySQL 8.0- Maven 项目，Mybatis连接数据库
