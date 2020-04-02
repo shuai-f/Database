@@ -7,6 +7,18 @@ public class Class {
     private int deptID;//A class belongs to one dept, one dept has one or more class
     private int teacherID;//A class has a teacher
 
+    public int getClassID() {
+        return classID;
+    }
+
+    public int getDeptID() {
+        return deptID;
+    }
+
+    public int getTeacherID() {
+        return teacherID;
+    }
+
     public void setClassID(int classID) {
         this.classID = classID;
     }
@@ -19,7 +31,13 @@ public class Class {
         this.teacherID = teacherID;
     }
 
-    public Class( int deptID, int teacherID) {
+    public Class(int classID, int deptID, int teacherID) {
+        this.classID = classID;
+        this.deptID = deptID;
+        this.teacherID = teacherID;
+    }
+
+    public Class(int deptID, int teacherID) {
         this.deptID = deptID;
         this.teacherID = teacherID;
     }

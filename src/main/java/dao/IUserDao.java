@@ -1,13 +1,8 @@
 package dao;
 
-import entity.College;
-import entity.Department;
-import entity.Student;
-import entity.Teacher;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import entity.*;
+import entity.Class;
+import relation.Elect;
 import relation.Manage;
 
 import java.util.List;
@@ -48,6 +43,37 @@ public interface IUserDao {
     //department
     Department findDepartmentbyID(int departID);
 
-    //管理表
+    //manage
     Manage findManagebyTeacherID(int teacherID);
+
+    //class
+    Class findClassbyID(int classID);
+
+    List<Elect> findElectbyStuID(int stuID);
+
+    Course findCoursebyID(int courseID);
+
+    Classroom findClassroombyclassroomID(int classroomID);
+
+    Teacher findTeacherbyName(String name);
+
+    List<Student> findStudentbyClassID(int classID);
+
+    //某学生某们课程成绩
+    Elect findElectbyStuIDAndCourseID(int stuID, int courseID);
+
+    List<Elect> findAllElect();
+    //某学生已选课程id
+    List<Integer> lookupElectedCourseID(int stuID);
+
+    List<Course> findAllCourse();
+    //获取所有课程id
+    List<Integer> findAllCourseID();
+
+    void insertElect(Elect elect);
+
+    //查学院名
+    String findCollegeNamebyCollegeID(int collegeID);
+
+    List<Course> findCoursebyTeacherID(int teacherID);
 }

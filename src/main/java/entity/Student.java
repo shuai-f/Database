@@ -1,5 +1,7 @@
 package entity;
 
+import java.util.Objects;
+
 public class Student {
     private int stuID;
     private String name;
@@ -96,6 +98,24 @@ public class Student {
         this.password = password;
         this.classID = classID;
         this.dormitoryID = dormitoryID;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Student student = (Student) o;
+        return getClassID() == student.getClassID() &&
+                getDormitoryID() == student.getDormitoryID() &&
+                getName().equals(student.getName()) &&
+                getBirthday().equals(student.getBirthday()) &&
+                getCommunication().equals(student.getCommunication()) &&
+                getEmail().equals(student.getEmail());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getName(), getBirthday(), getCommunication(), getEmail(), getClassID(), getDormitoryID());
     }
 
     @Override

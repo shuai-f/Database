@@ -7,6 +7,14 @@ public class Course {
     private int classroomID;// A course is given by a classroom, a classroom can give one or more course in different time period
     private int teacherID;// A course is given by a teacher
 
+    public Course(int courseID, String courseName, float credit, int classroomID, int teacherID) {
+        this.courseID = courseID;
+        this.courseName = courseName;
+        this.credit = credit;
+        this.classroomID = classroomID;
+        this.teacherID = teacherID;
+    }
+
     public Course(String courseName, float credit, int classroomID, int teacherID) {
         this.courseName = courseName;
         this.credit = credit;

@@ -8,6 +8,12 @@ public class Classroom {
     private String building;
     private String location;
 
+    public Classroom(int classroomID, String building, String location) {
+        this.classroomID = classroomID;
+        this.building = building;
+        this.location = location;
+    }
+
     public Classroom(String building, String location) {
         this.building = building;
         this.location = location;

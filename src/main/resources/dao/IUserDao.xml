@@ -33,9 +33,17 @@
         select * from student where name=#{name}
     </select>
 
+    <select id="findStudentbyClassID" parameterType="int" resultType="entity.Student">
+        select * from student where classID=#{classID}
+    </select>
+
     <!--配置Teacher 所有操作-->
     <select id="findTeacherbyID" parameterType="int" resultType="entity.Teacher">
         select * from teacher where teacherID=#{teacherID}
+    </select>
+
+    <select id="findTeacherbyName" parameterType="String" resultType="entity.Teacher">
+        select * from teacher where name=#{name}
     </select>
 
     <select id="findAllTeacher" resultType="entity.Teacher">
@@ -62,5 +70,58 @@
     <!--配置Department表-->
     <select id="findDepartmentbyID" parameterType="int" resultType="entity.Department">
         select * from department where departID=#{deptID}
+    </select>
+
+    <!--配置Class表-->
+    <select id="findClassbyID" parameterType="int" resultType="entity.Class">
+        select * from class where classID=#{classID}
+    </select>
+
+    <!--配置Elect表-->
+    <select id="findElectbyStuID" parameterType="int" resultType="relation.Elect">
+        select * from elect where stuID=#{stuID}
+    </select>
+
+    <select id="findElectbyStuIDAndClassID" parameterType="int" resultType="relation.Elect">
+        select * from elect where stuID=#{stuID} and classID=#{classID}
+    </select>
+
+    <select id="findAllElect" resultType="relation.Elect">
+        select * from elect
+    </select>
+
+    <select id="lookupElectedCourseID" resultType="int">
+        select courseID from elect where stuID=#{stuID}
+    </select>
+
+    <insert id="insertElect" parameterType="relation.Elect">
+        insert into elect(courseID,stuID,achievement)values(#{courseID},#{stuID},#{achievement})
+    </insert>
+
+    <!--配置Course表-->
+    <select id="findCoursebyID" parameterType="int" resultType="entity.Course">
+        select * from course where courseID=#{courseID}
+    </select>
+
+    <select id="findCoursebyTeacherID" parameterType="int" resultType="entity.Course">
+        select * from course where teacherID = #{teacherID}
+    </select>
+
+    <select id="findAllCourse" resultType="entity.Course">
+        select * from course
+    </select>
+
+    <select id="findAllCourseID" resultType="int">
+        select courseID from course;
+    </select>
+
+    <!--配置Classroom表-->
+    <select id="findClassroombyclassroomID" parameterType="int" resultType="entity.Classroom">
+        select * from classroom where classroomID=#{classroomID}
+    </select>
+
+    <!--配置College表-->
+    <select id="findCollegeNamebyCollegeID" parameterType="int" resultType="String">
+        select name from college where collegeID=#{collegeID}
     </select>
 </mapper>

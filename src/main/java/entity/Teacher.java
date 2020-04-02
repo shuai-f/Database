@@ -2,6 +2,8 @@ package entity;
 
 import org.junit.Test;
 
+import java.util.Objects;
+
 /**
  * 教师
  */
@@ -21,6 +23,23 @@ public class Teacher {
         this.birthday = birthday;
         this.deptID = deptID;
         this.password = password;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Teacher teacher = (Teacher) o;
+        return getDeptID() == teacher.getDeptID() &&
+                getName().equals(teacher.getName()) &&
+                getCommunication().equals(teacher.getCommunication()) &&
+                getEmail().equals(teacher.getEmail()) &&
+                getBirthday().equals(teacher.getBirthday());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getName(), getCommunication(), getEmail(), getBirthday(), getDeptID());
     }
 
     public Teacher(int teacherID, String name, String communication, int deptID, String email, String birthday, String password) {
