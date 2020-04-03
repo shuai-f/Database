@@ -19,12 +19,12 @@
          - /ui - 图形化界面
              - UI.java - 用户主界面（登录界面）
              - AdminUI.java - 管理员操作界面
-       - /resourses - 项目配置文件
+      - /resourses - 项目配置文件
          - /dao/IUserDao.xml - 配置Sql语句，Mapper
          - log4j.properties - 配置log4j
          - MybatisConfig.xml - Mybatis主配置文件
          - mysql.properties - MySQL数据库信息配置文件
-    - /tset - 项目测试文件
+   - /tset - 项目测试文件
 
 
 
