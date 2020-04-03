@@ -10,7 +10,7 @@
     </select>
 
     <insert id="insertStudent" parameterType="entity.Student">
-        <!--配置插入操作之后获取插入id-->
+        <!--配置插入操作之后获取插入id,封装到param里-->
         <selectKey keyProperty="stuID" keyColumn="stuID" resultType="int" order="AFTER">
             select last_insert_id();
         </selectKey>
@@ -18,7 +18,7 @@
     </insert>
 
     <update id="updateStudent" parameterType="entity.Student">
-        update student set name=#{name},birthday=#{birthday},communication=#{communication},email=#{email},password=#{password},classID=#{classID},dormitoryID=#{dormitoryID}
+        update student set name=#{name},birthday=#{birthday},communication=#{communication},email=#{email},password=#{password},classID=#{classID},dormitoryID=#{dormitoryID} where stuID=#{stuID}
     </update>
 
     <delete id="deleteStudent" parameterType="java.lang.Integer">
@@ -51,16 +51,23 @@
     </select>
 
     <insert id="insertTeacher" parameterType="entity.Teacher">
+        <selectKey keyProperty="teacherID" keyColumn="teacherID" resultType="int" order="AFTER">
+            select last_insert_id();
+        </selectKey>
         insert into teacher(name,birthday,communication,email,password,deptID)values(#{name},#{birthday},#{communication},#{email},#{password},#{deptID})
     </insert>
 
     <update id="updateTeacher" parameterType="entity.Teacher">
-        update teacher set name=#{name},birthday=#{birthday},communication=#{communication},email=#{email},password=#{password},deptID=#{deptID}
+        update teacher set name=#{name},birthday=#{birthday},communication=#{communication},email=#{email},password=#{password},deptID=#{deptID} where teacherID=#{teacherID}
     </update>
 
     <delete id="deleteTeacher" parameterType="java.lang.Integer">
         delete from teacher where teacherID = #{teacherID}
     </delete>
+
+    <select id="findDormitorybyID" parameterType="int" resultType="entity.Dormitory">
+        select * from dormitory where dormitoryID=#{dormitoryID}
+    </select>
 
     <!--配置Manage表-->
     <select id="findManagebyTeacherID" parameterType="int" resultType="relation.Manage">
@@ -82,8 +89,8 @@
         select * from elect where stuID=#{stuID}
     </select>
 
-    <select id="findElectbyStuIDAndClassID" parameterType="int" resultType="relation.Elect">
-        select * from elect where stuID=#{stuID} and classID=#{classID}
+    <select id="findElectbyStuIDAndCourseID" parameterType="relation.Elect" resultType="relation.Elect">
+        select * from elect where stuID=#{stuID} and courseID=#{courseID}
     </select>
 
     <select id="findAllElect" resultType="relation.Elect">
@@ -97,6 +104,10 @@
     <insert id="insertElect" parameterType="relation.Elect">
         insert into elect(courseID,stuID,achievement)values(#{courseID},#{stuID},#{achievement})
     </insert>
+
+    <delete id="deleteElectbyStuID" parameterType="int">
+        delete from elect where stuID=#{stuID}
+    </delete>
 
     <!--配置Course表-->
     <select id="findCoursebyID" parameterType="int" resultType="entity.Course">
@@ -124,4 +135,77 @@
     <select id="findCollegeNamebyCollegeID" parameterType="int" resultType="String">
         select name from college where collegeID=#{collegeID}
     </select>
+
+    <select id="findAllDepartment" resultType="Department">
+        select * from department
+    </select>
+
+    <select id="findAllCollege" resultType="College">
+        select * from college
+    </select>
+
+    <select id="findAllClass" resultType="Class">
+        select * from class
+    </select>
+
+    <select id="findAllClassroom" resultType="Classroom">
+        select * from classroom
+    </select>
+
+    <select id="findAllManage" resultType="Manage">
+        select * from manage
+    </select>
+
+    <select id="findAllDormitory" resultType="Dormitory">
+        select * from dormitory
+    </select>
+
+    <!--配置Admin-->
+    <select id="findPasswordbyAdmin" resultType="String" parameterType="String">
+        select password from administrator where admin=#{admin}
+    </select>
+
+    <!--分组查询测试-->
+    <resultMap id="byCourseID" type="java.util.Map">
+        <result column="courseID" property="courseID"/>
+        <result column="count(stuID)" property="count"/>
+    </resultMap>
+
+    <!--分组查询：查询各个课程号对应的选课人数-->
+    <select id="findStusGroupbyCourseID" resultMap="byCourseID">
+        select a.courseID,count(stuID) from elect as a group by a.courseID
+    </select>
+
+    <select id="havingAndGroupQuery" resultType="int">
+        select stuID from elect as a group by stuID having avg(a.achievement)>90
+    </select>
+
+    <!--嵌套查询测试:查询选修了二号课程的学生姓名-->
+    <select id="nestingQuery" resultType="String">
+        select name from student as a where a.stuID in (
+            select stuID from elect as b where b.courseID='2'
+        )
+    </select>
+
+    <!--连接查询测试：-->
+    <select id="connQuery" resultType="String">
+        select a.name from student as a,elect as b where a.stuID=b.stuID and b.courseID='2'
+    </select>
+
+    <resultMap id="connMap" type="complex.Conn">
+        <id column="dept" property="deptID"/>
+        <result column="classID" property="classID"/>
+        <result column="teacherID" property="teacherID"/>
+        <association property="department" javaType="department">
+            <id column="departID" property="departID"/>
+            <result column="name" property="name"/>
+            <result column="timeOfestablish" property="timeOfestablish"/>
+            <result column="collegeID" property="collegeID"/>
+        </association>
+    </resultMap>
+
+    <select id="conn" resultMap="connMap">
+        select b.*,a.classID,a.deptID as dept,a.teacherID from class as a,department as b where a.deptID=b.departID
+    </select>
+
 </mapper>
