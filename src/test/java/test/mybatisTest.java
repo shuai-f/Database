@@ -1,5 +1,6 @@
 package test;
 
+import complex.Conn;
 import dao.IUserDao;
 import entity.Student;
 import org.apache.ibatis.io.Resources;
@@ -14,6 +15,7 @@ import javax.crypto.interfaces.PBEKey;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
 
 public class mybatisTest {
     private InputStream in ;
@@ -66,5 +68,13 @@ public class mybatisTest {
     public void testFindStudentbyID(){
         int id = 1;
         System.out.println(userDao.findStudentbyID(id));
+    }
+
+    @Test
+    public void  testfindStusGroupbyCourseID(){
+        List<String> maps = userDao.connQuery();
+        for (String map : maps) {
+            System.out.println(map);
+        }
     }
 }
