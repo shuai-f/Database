@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>entity</OriginalElement>
+  <nodes>
+    <node x="454.0" y="262.0">entity.Class</node>
+    <node x="436.0" y="0.0">entity.College</node>
+    <node x="659.0" y="277.0">entity.Dormitory</node>
+    <node x="0.0" y="0.0">entity.Student</node>
+    <node x="-1.0" y="459.0">relation.Elect</node>
+    <node x="670.0" y="1.0">entity.Department</node>
+    <node x="-1.0" y="256.0">entity.Course</node>
+    <node x="218.0" y="0.0">entity.Teacher</node>
+    <node x="218.0" y="263.0">entity.Classroom</node>
+    <node x="219.0" y="478.0">relation.Manage</node>
+    <node x="0.0" y="614.0">entity.Administrator</node>
+  </nodes>
+  <notes />
+  <edges />
+  <settings layout="Hierarchic Group" zoom="0.9344490934449093" x="421.5" y="348.5" />
+  <SelectedNodes />
+  <Categories>
+    <Category>Fields</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+
