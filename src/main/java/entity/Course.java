@@ -15,6 +15,17 @@ public class Course {
         this.teacherID = teacherID;
     }
 
+    @Override
+    public String toString() {
+        return "Course{" +
+                "courseID=" + courseID +
+                ", courseName='" + courseName + '\'' +
+                ", credit=" + credit +
+                ", classroomID=" + classroomID +
+                ", teacherID=" + teacherID +
+                '}';
+    }
+
     public Course(String courseName, float credit, int classroomID, int teacherID) {
         this.courseName = courseName;
         this.credit = credit;

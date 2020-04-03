@@ -14,6 +14,15 @@ public class Classroom {
         this.location = location;
     }
 
+    @Override
+    public String toString() {
+        return "Classroom{" +
+                "classroomID=" + classroomID +
+                ", building='" + building + '\'' +
+                ", location='" + location + '\'' +
+                '}';
+    }
+
     public Classroom(String building, String location) {
         this.building = building;
         this.location = location;

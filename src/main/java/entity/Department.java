@@ -41,10 +41,13 @@ public class Department {
         this.collegeID = collegeID;
     }
 
-    public Department(int departID, String name, String timeOfestablish, int collegeID) {
-        this.departID = departID;
-        this.name = name;
-        this.timeOfestablish = timeOfestablish;
-        this.collegeID = collegeID;
+    @Override
+    public String toString() {
+        return "Department{" +
+                "departID=" + departID +
+                ", name='" + name + '\'' +
+                ", timeOfestablish='" + timeOfestablish + '\'' +
+                ", collegeID=" + collegeID +
+                '}';
     }
 }

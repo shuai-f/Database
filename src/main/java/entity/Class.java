@@ -31,6 +31,15 @@ public class Class {
         this.teacherID = teacherID;
     }
 
+    @Override
+    public String toString() {
+        return "Class{" +
+                "classID=" + classID +
+                ", deptID=" + deptID +
+                ", teacherID=" + teacherID +
+                '}';
+    }
+
     public Class(int classID, int deptID, int teacherID) {
         this.classID = classID;
         this.deptID = deptID;

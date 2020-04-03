@@ -11,12 +11,33 @@ public class College {
     private String communication;
     private String timeOfestablish;
 
+    public College(int collegeID, String name, String address, String postcode, String communication, String timeOfestablish) {
+        this.collegeID = collegeID;
+        this.name = name;
+        this.address = address;
+        this.postcode = postcode;
+        this.communication = communication;
+        this.timeOfestablish = timeOfestablish;
+    }
+
     public College(String name, String address, String postcode, String communication, String timeOfestablish) {
         this.name = name;
         this.address = address;
         this.postcode = postcode;
         this.communication = communication;
         this.timeOfestablish = timeOfestablish;
+    }
+
+    @Override
+    public String toString() {
+        return "College{" +
+                "collegeID=" + collegeID +
+                ", name='" + name + '\'' +
+                ", address='" + address + '\'' +
+                ", postcode='" + postcode + '\'' +
+                ", communication='" + communication + '\'' +
+                ", timeOfestablish='" + timeOfestablish + '\'' +
+                '}';
     }
 
     public int getCollegeID() {
