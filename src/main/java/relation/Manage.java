@@ -24,6 +24,15 @@ public class Manage {
         this.classID = classID;
     }
 
+    @Override
+    public String toString() {
+        return "Manage{" +
+                "manageID=" + manageID +
+                ", teacherID=" + teacherID +
+                ", classID=" + classID +
+                '}';
+    }
+
     public int getManageID() {
         return manageID;
     }

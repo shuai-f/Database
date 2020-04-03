@@ -19,6 +19,9 @@ public class Elect {
                 '}';
     }
 
+    public Elect() {
+    }
+
     public int getElectID() {
         return electID;
     }
