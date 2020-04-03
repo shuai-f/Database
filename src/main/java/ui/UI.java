@@ -1,6 +1,8 @@
 package ui;
 
 import com.sun.javafx.sg.prism.web.NGWebView;
+import com.sun.org.apache.xerces.internal.util.EntityResolverWrapper;
+import com.sun.xml.internal.bind.v2.model.core.ID;
 import dao.IUserDao;
 import entity.*;
 import entity.Class;
@@ -22,6 +24,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.Savepoint;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;
@@ -77,7 +80,7 @@ public class UI {
         // 创建面板
         JPanel panel = new JPanel();
         panel.setLayout(null);    // 面板布局
-
+        initGlobalFontSetting(24);
         //创建 标签 & 输入框 & 按钮
         JLabel userLabel = new JLabel("工号:");
         JLabel passwordLabel = new JLabel("密码:");
@@ -90,24 +93,26 @@ public class UI {
         JButton registerButton = new JButton("注册");
 
         // 设置标签的大小和位置
-        int x,y,width,height;
-        x = 150;
+        int x,y,width,height = 30;
+        x = 200;
         y = 100;
-        userLabel.setBounds(x, y+20, 80, 25);
-        passwordLabel.setBounds(x, y+50, 80, 25);
-        identityLabel.setBounds(x, y+80, 80, 25);
+        int alias = 80;
+        userLabel.setBounds(x, y+20, 80, height);
+        passwordLabel.setBounds(x, y+50, 80, height);
+        identityLabel.setBounds(x, y+80, 80, height);
 
-        userNameText.setBounds(x+40, y+20, 165, 25);
-        userPasswordText.setBounds(x+40, y+50, 165, 25);
-        //identityText.setBounds(x+40, y+80, 165, 25);
+        userNameText.setBounds(x+alias, y+20, 165, height);
+        userPasswordText.setBounds(x+alias, y+50, 165, height);
+        //identityText.setBounds(x+alias, y+80, 165, height);
 
-        loginButton.setBounds(220, y+110, 80, 25);
-        registerButton.setBounds(220, y+140, 80, 25);
+        loginButton.setBounds(240, y+110, 100, height);
+        registerButton.setBounds(240, y+140, 100, height);
 
         JComboBox comBox = new JComboBox();//下拉列表
         comBox.addItem("学生");
         comBox.addItem("老师");
-        comBox.setBounds(x+40, y+80, 165, 25);
+        comBox.addItem("管理员");
+        comBox.setBounds(x+alias, y+80, 165, height);
         panel.add(comBox);
 
         // 设置面板内容
@@ -127,34 +132,46 @@ public class UI {
         loginButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // 检测身份
-                int userID = Integer.parseInt(userNameText.getText());
                 String password = String.valueOf(userPasswordText.getPassword());
-                System.out.println(password);
-                if (comBox.getSelectedItem().toString().equals("老师")) {
-                    Teacher teacher = userDao.findTeacherbyID(userID);
-                    System.out.println(teacher);
-                    // 查找该用户
-                    if (teacher.getPassword().equals(password)){
-                        JOptionPane.showMessageDialog(panel, "登陆成功", "提示",JOptionPane.WARNING_MESSAGE);
+                if (comBox.getSelectedItem().toString().equals("管理员")) {
+                    String admin = userNameText.getText();
+                    if (admin.equals("root") && password.equals(userDao.findPasswordbyAdmin(admin))) {
+                        JOptionPane.showMessageDialog(panel, "登陆成功", "提示", JOptionPane.WARNING_MESSAGE);
                         frame.dispose();
-                        individualPage("teacher",teacher);
+                        AdminUI adminUI = new AdminUI();
+                        adminUI.adminPage();
+                        return;
                     } else {
-                        JOptionPane.showMessageDialog(panel, "学工号或密码错误", "提示",JOptionPane.WARNING_MESSAGE);
-                    }
-                } else if (comBox.getSelectedItem().toString().equals("学生")) {
-                    // 查找该用户
-                    Student student = userDao.findStudentbyID(userID);
-                    System.out.println(student);
-                    if (student.getPassword().equals(password)){
-                        JOptionPane.showMessageDialog(panel, "登录成功", "提示",JOptionPane.WARNING_MESSAGE);
-                        frame.dispose();
-                        individualPage("student",student);
-                    } else {
-                        JOptionPane.showMessageDialog(panel, "学工号或密码错误", "提示",JOptionPane.WARNING_MESSAGE);
+                        JOptionPane.showMessageDialog(panel, "学工号或密码错误", "提示", JOptionPane.WARNING_MESSAGE);
+                        return;
                     }
                 }
-
+                if (userNameText.getText().matches("^[1-9]\\d*$")) {
+                    // 检测身份
+                    int userID = Integer.parseInt(userNameText.getText());
+                    System.out.println(password);
+                    if (comBox.getSelectedItem().toString().equals("老师")) {
+                        Teacher teacher = userDao.findTeacherbyID(userID);
+                        System.out.println(teacher);
+                        // 查找该用户
+                        if (teacher.getPassword().equals(password)) {
+                            JOptionPane.showMessageDialog(panel, "登陆成功", "提示", JOptionPane.WARNING_MESSAGE);
+                            frame.dispose();
+                            individualPage("teacher", teacher);
+                        }
+                    } else if (comBox.getSelectedItem().toString().equals("学生")) {
+                        // 查找该用户
+                        Student student = userDao.findStudentbyID(userID);
+                        System.out.println(student);
+                        if (student.getPassword().equals(password)) {
+                            JOptionPane.showMessageDialog(panel, "登录成功", "提示", JOptionPane.WARNING_MESSAGE);
+                            frame.dispose();
+                            individualPage("student", student);
+                        }
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(panel, "学工号或密码错误", "提示", JOptionPane.WARNING_MESSAGE);
+                }
             }
         });
 
@@ -209,7 +226,7 @@ public class UI {
         JLabel classLabel = new JLabel("班级号：");
         JLabel dormitoryLabel = new JLabel("寝室号：");
 
-        int columns = 25;
+        int columns = 30;
         JTextField idTextField = new JTextField(columns);
         JTextField nameTextField = new JTextField(columns);
         JTextField emailTextField = new JTextField(columns);
@@ -252,27 +269,27 @@ public class UI {
             deptTextField.setText("["+department.getDepartID()+"] "+department.getName());
             collegeTextField.setText("["+department.getCollegeID()+"] "+userDao.findCollegeNamebyCollegeID(department.getCollegeID()));
             Manage manage = userDao.findManagebyTeacherID(teacher.getTeacherID());
-            if(manage.getManageID()!=0){
+            if(manage!=null){
                 JLabel manageClassLabel = new JLabel("管理班：");
                 JTextField manageClassTextField = new JTextField();
                 manageClassTextField.setText(manage.getClassID()+"");
                 panel.add(manageClassLabel);manageClassLabel.setBounds(xLabel,y+alice*7,width,height);panel.add(manageClassTextField);manageClassTextField.setBounds(xText,y+alice*7,width,height);
+                JButton viewClass = new JButton("查看班级");
+                panel.add(viewClass);viewClass.setBounds(xText,y+alice*10,width,height);
+
+                viewClass.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        viewClass(manage.getClassID());
+                    }
+                });
             }
-
             JButton viewTeachCourse = new JButton("查看任课表"); //查看任课信息
-            JButton viewClass = new JButton("查看班级");
-            panel.add(viewTeachCourse);viewTeachCourse.setBounds(100,y+alice*10,width,height);panel.add(viewClass);viewClass.setBounds(xText,y+alice*10,width,height);
-
+            panel.add(viewTeachCourse);viewTeachCourse.setBounds(100,y+alice*10,width,height);
             viewTeachCourse.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     viewTeachCourse(teacher);
-                }
-            });
-            viewClass.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    viewClass(manage.getClassID());
                 }
             });
             JButton button = new JButton("保存");
@@ -315,12 +332,12 @@ public class UI {
             panel.add(classLabel);classLabel.setBounds(xLabel,y+alice*7,width,height);panel.add(classTextField);classTextField.setBounds(xText,y+alice*7,width,height);
             panel.add(dormitoryLabel);dormitoryLabel.setBounds(xLabel,y+alice*8,width,height);panel.add(dormitoryTextField);dormitoryTextField.setBounds(xText,y+alice*8,width,height);
 
-            JButton button = new JButton("保存");
+            JButton saveButton = new JButton("保存");
             JButton electButton = new JButton("选课");
             panel.add(electButton);electButton.setBounds(xText,y+alice*9,width,height);
 
-            panel.add(button);button.setBounds(100,y+alice*9,width,height);
-            button.addActionListener(new ActionListener() {
+            panel.add(saveButton);saveButton.setBounds(100,y+alice*9,width,height);
+            saveButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     String name = nameTextField.getText();
@@ -434,7 +451,6 @@ public class UI {
             Course course = Courses.get(i);
             Teacher teacher = userDao.findTeacherbyID(course.getTeacherID());
             Classroom classroom = userDao.findClassroombyclassroomID(course.getClassroomID());
-            Elect elect = userDao.findElectbyStuIDAndCourseID(student.getStuID(),course.getCourseID());
             int y = 0;
             data[i][y++] = course.getCourseID();
             data[i][y++] = course.getCourseName();
@@ -536,7 +552,9 @@ public class UI {
             Course course = userDao.findCoursebyID(elects.get(i).getCourseID());
             Teacher teacher = userDao.findTeacherbyID(course.getTeacherID());
             Classroom classroom = userDao.findClassroombyclassroomID(course.getClassroomID());
-            Elect elect = userDao.findElectbyStuIDAndCourseID(student.getStuID(),course.getCourseID());
+            Elect test = new Elect();
+            test.setStuID(student.getStuID());test.setCourseID(course.getCourseID());
+            Elect elect = userDao.findElectbyStuIDAndCourseID(test);
             int y = 0;
             data[i][y++] = course.getCourseID();
             data[i][y++] = course.getCourseName();
@@ -560,10 +578,9 @@ public class UI {
 
     private void choosePage(){
         JFrame frame = new JFrame("注册界面");
-
+        initGlobalFontSetting(24);
         JButton teacherButton = new JButton("注册教师身份");
         JButton studentButton = new JButton("注册学生身份");
-        initGlobalFontSetting(16);
         frame.setSize(800,800);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocation( (screenSize.width - frame.getWidth()) / 2,
@@ -640,17 +657,17 @@ public class UI {
             panel.add(classLabel);classLabel.setBounds(xLabel,y+alice*7,width,height);panel.add(classTextField);classTextField.setBounds(xText,y+alice*7,width,height);
             panel.add(dormitoryLabel);dormitoryLabel.setBounds(xLabel,y+alice*8,width,height);panel.add(dormitoryTextField);dormitoryTextField.setBounds(xText,y+alice*8,width,height);
             JButton button = new JButton("确定");
-            panel.add(button);button.setBounds(600,y+alice*9,width,height);
+            panel.add(button);button.setBounds(500,y+alice*9,width,height);
             button.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    if(nameTextField.getText().equals("") || birthdayTextField.getText().equals("") ||
+                    if (nameTextField.getText().equals("") || birthdayTextField.getText().equals("") ||
                             emailTextField.getText().equals("") || communicationTextField.getText().equals("") ||
                             deptTextField.getText().equals("") || collegeTextField.getText().equals("") ||
                             classTextField.getText().equals("") || dormitoryTextField.getText().equals("") || passwordTextField.getText().equals("")
-                    ){
-                        JOptionPane.showMessageDialog(panel,"个人信息不能为空！","提示",JOptionPane.WARNING_MESSAGE);
-                        return ;
+                    ) {
+                        JOptionPane.showMessageDialog(panel, "个人信息不能为空！", "提示", JOptionPane.WARNING_MESSAGE);
+                        return;
                     }
                     String password = passwordTextField.getText();
                     String name = nameTextField.getText();
@@ -663,7 +680,15 @@ public class UI {
                     int dormitoryID = Integer.parseInt(dormitoryTextField.getText());
                     Class myClass = userDao.findClassbyID(classID);
                     Department department = userDao.findDepartmentbyID(deptID);
-                    if (deptID != myClass.getDeptID()){
+                    if (myClass==null){
+                        JOptionPane.showMessageDialog(panel,"班号不存在，请重新确认！","提示",JOptionPane.WARNING_MESSAGE);
+                    } else if (department==null){
+                        JOptionPane.showMessageDialog(panel,"系号不存在，请重新确认！","提示",JOptionPane.WARNING_MESSAGE);
+                    } else if (userDao.findCollegeNamebyCollegeID(collegeID)==null){
+                        JOptionPane.showMessageDialog(panel,"学院号不存在，请重新确认！","提示",JOptionPane.WARNING_MESSAGE);
+                    } else if (userDao.findDormitorybyID(dormitoryID)==null){
+                        JOptionPane.showMessageDialog(panel,"寝室号不存在，请重新确认！","提示",JOptionPane.WARNING_MESSAGE);
+                    } else if (deptID != myClass.getDeptID()){
                         JOptionPane.showMessageDialog(panel,"班号和系号不匹配，请重新确认！","提示",JOptionPane.WARNING_MESSAGE);
                     } else if(collegeID != department.getCollegeID()){
                         JOptionPane.showMessageDialog(panel,"系号和学院号不匹配，请重新确认！","提示",JOptionPane.WARNING_MESSAGE);
@@ -674,7 +699,7 @@ public class UI {
                             JOptionPane.showMessageDialog(panel,"个人信息重复，请重新确认！","提示",JOptionPane.WARNING_MESSAGE);
                         } else {
                             userDao.insertStudent(newStudent);
-                            JOptionPane.showMessageDialog(panel,"插入成功！","提示",JOptionPane.WARNING_MESSAGE);
+                            JOptionPane.showMessageDialog(panel,"注册成功！工号为："+newStudent.getStuID(),"提示",JOptionPane.WARNING_MESSAGE);
                             frame.dispose();
                         }
                     }
@@ -682,10 +707,8 @@ public class UI {
                 }
             });
         } else {
-            panel.add(classLabel);classLabel.setBounds(xLabel,y+alice*7,width,height);panel.add(classTextField);classTextField.setBounds(xText,y+alice*7,width,height);
-            panel.add(dormitoryLabel);dormitoryLabel.setBounds(xLabel,y+alice*8,width,height);panel.add(dormitoryTextField);dormitoryTextField.setBounds(xText,y+alice*8,width,height);
             JButton button = new JButton("确定");
-            panel.add(button);button.setBounds(600,y+alice*9,width,height);
+            panel.add(button);button.setBounds(500,y+alice*9,width,height);
             button.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -705,7 +728,11 @@ public class UI {
                     int deptID = Integer.parseInt(deptTextField.getText());
                     int collegeID = Integer.parseInt(collegeTextField.getText());
                     Department department = userDao.findDepartmentbyID(deptID);
-                    if(collegeID != department.getCollegeID()){
+                    if (department==null){
+                        JOptionPane.showMessageDialog(panel,"系号不存在，请重新确认！","提示",JOptionPane.WARNING_MESSAGE);
+                    } else if (userDao.findCollegeNamebyCollegeID(collegeID)==null){
+                        JOptionPane.showMessageDialog(panel,"学院号不存在，请重新确认！","提示",JOptionPane.WARNING_MESSAGE);
+                    } else if(collegeID != department.getCollegeID()){
                         JOptionPane.showMessageDialog(panel,"系号和学院号不匹配，请重新确认！","提示",JOptionPane.WARNING_MESSAGE);
                     } else {
                         Teacher newTeacher = new Teacher(name,communication,email,birthday,deptID,password);
@@ -714,7 +741,7 @@ public class UI {
                             JOptionPane.showMessageDialog(panel,"个人信息重复，请重新确认！","提示",JOptionPane.WARNING_MESSAGE);
                         } else {
                             userDao.insertTeacher(newTeacher);
-                            JOptionPane.showMessageDialog(panel,"插入成功！","提示",JOptionPane.WARNING_MESSAGE);
+                            JOptionPane.showMessageDialog(panel,"注册成功！工号为："+newTeacher.getTeacherID(),"提示",JOptionPane.INFORMATION_MESSAGE);
                             frame.dispose();
                         }
                     }
