@@ -1,11 +1,13 @@
 package dao;
 
+import complex.Conn;
 import entity.*;
 import entity.Class;
 import relation.Elect;
 import relation.Manage;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Mybatis mapper
@@ -19,7 +21,7 @@ public interface IUserDao {
     //student
     List<Student> findAllStudent();
 
-    void insertStudent(Student student);
+    int insertStudent(Student student);
 
     void updateStudent(Student student);
 
@@ -60,7 +62,7 @@ public interface IUserDao {
     List<Student> findStudentbyClassID(int classID);
 
     //某学生某们课程成绩
-    Elect findElectbyStuIDAndCourseID(int stuID, int courseID);
+    Elect findElectbyStuIDAndCourseID(Elect elect);
 
     List<Elect> findAllElect();
     //某学生已选课程id
@@ -76,4 +78,33 @@ public interface IUserDao {
     String findCollegeNamebyCollegeID(int collegeID);
 
     List<Course> findCoursebyTeacherID(int teacherID);
+
+    //管理员登录确认
+    String findPasswordbyAdmin(String admin);
+
+    List<Department> findAllDepartment();
+
+    List<College> findAllCollege();
+
+    List<Class> findAllClass();
+
+    List<Classroom> findAllClassroom();
+
+    List<Manage> findAllManage();
+
+    List<Dormitory> findAllDormitory();
+
+    //分组查询测试
+    List<Map> findStusGroupbyCourseID();
+    List<Integer> havingAndGroupQuery();
+    //嵌套查询
+    List<String> nestingQuery();
+
+    List<String> connQuery();
+
+    List<Conn> conn();
+
+    void deleteElectbyStuID(int id);
+
+    Dormitory findDormitorybyID(int dormitoryID);
 }
