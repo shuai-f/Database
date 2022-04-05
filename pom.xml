@@ -28,11 +28,7 @@
             <version>4.13.1</version>
         </dependency>
         <!--用日志的形式打印测试结果，方便调试-->
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>1.2.17</version>
-        </dependency>
+
     </dependencies>
 
     <properties>
